@@ -75,7 +75,7 @@ Deze vier punten gaan zowel over hoe jij een taak opstelt, als over wat
 
 1. Vat in één zin samen wat er precies gebouwd of aangepast moet worden.
 2. Kies een model uit de lijst die je al hebt. Voorkeur voor een
-   coder-gericht model (naam bevat bijvoorbeeld "coder"); anders het
+   coder-gericht model (naam bevat bijvoorbeeld "coder", ornith modellen etc); anders het
    grootste/meest capabele model dat er staat. Vergelijk de bestandsgrootte
    van dat model met het geheugen van deze machine (uit de hook): past het
    niet ruim, kies dan een kleiner model of overleg met de gebruiker in
