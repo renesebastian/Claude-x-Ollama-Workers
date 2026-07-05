@@ -39,6 +39,67 @@ automatisch, geïsoleerd van de rest van je systeem. Omdat het script zelf
 zijn dependencies declareert, werkt hetzelfde repo ongewijzigd op beide
 Macs, ongeacht welke modellen daar lokaal geïnstalleerd zijn.
 
+## Toevoegen aan een bestaand project (als subfolder)
+
+Bovenstaande gaat uit van een lege map als projectroot. Heb je al een
+project met een eigen `CLAUDE.md`, `.mcp.json` of `.claude/settings.json`,
+zet deze map dan als subfolder in dat project (bijvoorbeeld als
+`ollama-tooling/`) en **voeg onderstaande toe** aan de bestaande bestanden
+in de root van dat project — nooit overschrijven, anders verlies je wat er
+al stond.
+
+**`.mcp.json` in de projectroot** — voeg de `ollama-bridge` sleutel toe aan
+de bestaande `mcpServers`, of maak het bestand aan als het nog niet bestaat:
+
+```json
+{
+  "mcpServers": {
+    "ollama-bridge": {
+      "command": "uv",
+      "args": ["run", "--script", "ollama-tooling/ollama_bridge/server.py"]
+    }
+  }
+}
+```
+
+**`.claude/settings.json` in de projectroot** — voeg dit item toe aan de
+bestaande `hooks.SessionStart` array (of maak het bestand aan):
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/ollama-tooling/.claude/hooks/session_start.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**`CLAUDE.md` in de projectroot** — voeg één regel toe, de rest van het
+bestand blijft ongewijzigd staan:
+
+```
+@ollama-tooling/CLAUDE.md
+```
+
+Dat is Claude Code's eigen import-syntax: de volledige inhoud van
+`ollama-tooling/CLAUDE.md` wordt bij sessiestart meegeladen zonder dat je
+iets hoeft te kopiëren of handmatig samen te voegen.
+
+Vervang `ollama-tooling` hierboven overal door de naam die je zelf aan de
+subfolder geeft. `ollama_bridge/server.py` gebruikt de env var
+`CLAUDE_PROJECT_DIR`, die Claude Code altijd op de echte projectroot zet —
+ook als het script zelf in een subfolder zit — dus de repo-context en
+`output_file`-paden slaan altijd op het hele project, niet op de subfolder
+alleen.
+
 ## Bestanden
 
 - `CLAUDE.md` — het protocol dat de orchestrator volgt

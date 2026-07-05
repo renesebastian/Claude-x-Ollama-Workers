@@ -32,7 +32,11 @@ from mcp.server.fastmcp import FastMCP
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 TIMEOUT = float(os.environ.get("OLLAMA_TIMEOUT", "300"))
-REPO_ROOT = Path.cwd().resolve()
+# CLAUDE_PROJECT_DIR is set by Claude Code to the real project root (where
+# `claude` was launched), even when this script itself lives in a subfolder
+# of a larger project — see README for using this tooling that way. Falling
+# back to cwd only matters when running server.py outside Claude Code.
+REPO_ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")).resolve()
 MEMORY_DIR = REPO_ROOT / "memory"
 
 mcp = FastMCP("ollama-bridge")
