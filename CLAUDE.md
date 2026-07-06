@@ -41,18 +41,26 @@ deze sessie, maar de onderliggende functionaliteit wel. Dit is geen extra
 stap voor de gebruiker: doe dit gewoon zelf, via Bash, zonder het te
 melden of te vragen of dat mag.
 
-1. `cd` naar deze map (de map met dit `CLAUDE.md` en `ollama_bridge/` erin)
-   — of gebruik overal hieronder het volledige pad naar deze map in plaats
-   van te cd'en, wat je uitkomt.
-2. Roep vanuit daar `uv run --script ollama_bridge/server.py <subcommando>` aan:
+1. Blijf gewoon staan in je huidige working directory — dat is de root van
+   het echte project waar je aan werkt. **`cd` NOOIT naar deze tools-map.**
+   Het script bepaalt zijn eigen project-root aan de hand van de working
+   directory van waaruit het wordt aangeroepen. Cd je hier toch naartoe,
+   dan denkt het script dat déze tools-map het hele project is, en komen
+   `output_file`, `verify_cmd` en de repo-context in de tools-map terecht
+   in plaats van in het echte project — precies fout dus.
+2. Roep het script aan met het pad naar deze map erin, terwijl je zelf in
+   de project-root blijft staan:
 
 ```
-uv run --script ollama_bridge/server.py list-models
-uv run --script ollama_bridge/server.py list-memory
-uv run --script ollama_bridge/server.py ask --model <naam> --prompt "..."
-uv run --script ollama_bridge/server.py delegate --model <naam> --task "..." \
+uv run --script Claude-x-Ollama-Workers/ollama_bridge/server.py list-models
+uv run --script Claude-x-Ollama-Workers/ollama_bridge/server.py list-memory
+uv run --script Claude-x-Ollama-Workers/ollama_bridge/server.py ask --model <naam> --prompt "..."
+uv run --script Claude-x-Ollama-Workers/ollama_bridge/server.py delegate --model <naam> --task "..." \
   --output-file <pad> --verify-cmd "<commando>" --memory-topic <label>
 ```
+
+(Vervang `Claude-x-Ollama-Workers` door de daadwerkelijke mapnaam, en pas
+het pad aan als deze map dieper genest zit dan direct in de project-root.)
 
 Volledige vlaggenlijst, voor als je die nodig hebt:
 
