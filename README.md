@@ -16,7 +16,7 @@ actual writing and iterating.
 Place this folder in your main project folder. Then:
 
 1. Run `claude`.
-2. Say: **"Read 'Claude-x-Ollama-Workers' and adjust your workflow to
+2. Say: **"Read the 'Claude-x-Ollama-Workers' folder and adjust your workflow to
    it."**
 
 That's it.
