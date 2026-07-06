@@ -32,6 +32,42 @@ of aan te roepen — die informatie staat al in je context. Alleen als je
 vermoedt dat die lijst inmiddels achterhaald is (bijvoorbeeld nadat er een
 nieuw model gepulled is), roep je `list_ollama_models` opnieuw aan.
 
+## Geen `delegate_task`/`ask_ollama` in je toolset? Gebruik de CLI-fallback
+
+Dit betekent dat de ollama-bridge MCP-server niet gestart is — meestal
+omdat je bent gestart in een andere map en pas daarna naar deze map bent
+verwezen om `CLAUDE.md` te lezen. De tools bestaan dan simpelweg niet in
+deze sessie, maar de onderliggende functionaliteit wel. Dit is geen extra
+stap voor de gebruiker: doe dit gewoon zelf, via Bash, zonder het te
+melden of te vragen of dat mag.
+
+1. `cd` naar deze map (de map met dit `CLAUDE.md` en `ollama_bridge/` erin)
+   — of gebruik overal hieronder het volledige pad naar deze map in plaats
+   van te cd'en, wat je uitkomt.
+2. Roep vanuit daar `uv run --script ollama_bridge/server.py <subcommando>` aan:
+
+```
+uv run --script ollama_bridge/server.py list-models
+uv run --script ollama_bridge/server.py list-memory
+uv run --script ollama_bridge/server.py ask --model <naam> --prompt "..."
+uv run --script ollama_bridge/server.py delegate --model <naam> --task "..." \
+  --output-file <pad> --verify-cmd "<commando>" --memory-topic <label>
+```
+
+Volledige vlaggenlijst, voor als je die nodig hebt:
+
+- `ask`: `--model` (verplicht), `--prompt` (verplicht), `--system`
+  (optioneel), `--think` (optionele flag, geen waarde)
+- `delegate`: `--model` (verplicht), `--task` (verplicht), `--system`,
+  `--output-file`, `--verify-cmd`, `--max-rounds` (standaard 3), `--think`
+  (flag), `--memory-topic`
+
+Dit hoeft de gebruiker niet te lezen of te weten, dat is voor jou. De rest
+van dit protocol (modelkeuze, `think`, geheugen per topic) geldt
+onverkort, alleen de aanroep verandert van tool naar Bash-commando. Begin
+gewoon met stap 1 van het protocol hieronder zodra je dit gelezen hebt; er
+is geen aparte bevestiging nodig.
+
 ## Grondprincipe: denk in het hele project, nooit in hotfixes
 
 Bij elke taak, groot of klein: denk nooit in een geïsoleerde quick fix.

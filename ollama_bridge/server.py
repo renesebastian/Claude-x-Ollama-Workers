@@ -487,5 +487,67 @@ def delegate_task(
     )
 
 
+def _run_cli(argv: list) -> None:
+    """Fallback for when this isn't wired up as an MCP server — e.g. Claude
+    Code was started one or more directories above this repo, so .mcp.json
+    was never discovered. Same functions, same behavior, just invoked
+    straight from Bash instead of through the MCP tool interface. Run from
+    the directory you want treated as the project root (usually this
+    repo's own root; cd there first if it isn't already cwd).
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="server.py")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    sub.add_parser("list-models", help="List installed Ollama models and this machine's memory.")
+    sub.add_parser("list-memory", help="List existing memory topics.")
+
+    p_ask = sub.add_parser("ask", help="One-shot delegation for small, non-code tasks.")
+    p_ask.add_argument("--model", required=True)
+    p_ask.add_argument("--prompt", required=True)
+    p_ask.add_argument("--system", default="")
+    p_ask.add_argument("--think", action="store_true")
+
+    p_delegate = sub.add_parser("delegate", help="Delegate a coding task, with retry-until-verified.")
+    p_delegate.add_argument("--model", required=True)
+    p_delegate.add_argument("--task", required=True)
+    p_delegate.add_argument("--system", default="")
+    p_delegate.add_argument("--output-file", default="")
+    p_delegate.add_argument("--verify-cmd", default="")
+    p_delegate.add_argument("--max-rounds", type=int, default=3)
+    p_delegate.add_argument("--think", action="store_true")
+    p_delegate.add_argument("--memory-topic", default="")
+
+    args = parser.parse_args(argv)
+
+    if args.cmd == "list-models":
+        print(list_ollama_models())
+    elif args.cmd == "list-memory":
+        print(list_memory_topics())
+    elif args.cmd == "ask":
+        print(ask_ollama(model=args.model, prompt=args.prompt, system=args.system, think=args.think))
+    elif args.cmd == "delegate":
+        print(
+            delegate_task(
+                model=args.model,
+                task=args.task,
+                system=args.system,
+                output_file=args.output_file,
+                verify_cmd=args.verify_cmd,
+                max_rounds=args.max_rounds,
+                think=args.think,
+                memory_topic=args.memory_topic,
+            )
+        )
+
+
+_CLI_COMMANDS = {"list-models", "list-memory", "ask", "delegate"}
+
 if __name__ == "__main__":
-    mcp.run()
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] in _CLI_COMMANDS:
+        _run_cli(sys.argv[1:])
+    else:
+        mcp.run()
